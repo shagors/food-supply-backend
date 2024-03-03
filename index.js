@@ -48,6 +48,7 @@ async function run() {
     const db = client.db("assignment");
     const collection = db.collection("users");
     const supply = db.collection("supplies");
+    const leaderboard = db.collection("leaderboard");
 
     // User Registration
     app.post("/api/v1/register", async (req, res) => {
@@ -308,6 +309,150 @@ async function run() {
 
     // ==============================================================
     // Supply code end
+    // ==============================================================
+
+    // ==============================================================
+    // leader Board code start
+    // ==============================================================
+
+    // supply POST function
+    app.post("/api/v1/add-buyer", async (req, res) => {
+      const task = req.body;
+      task.createdAt = new Date();
+      const result = await leaderboard.insertOne(task);
+      // res.send(result);
+      res.status(201).json({
+        success: true,
+        message: "Leaderboard created successfully",
+      });
+    });
+
+    // All supply GET function
+    app.get("/api/v1/leaderboard", async (req, res) => {
+      try {
+        const leaderboards = await leaderboard.find().toArray();
+        res.status(200).json({
+          success: true,
+          data: leaderboards,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Internal Server Error",
+        });
+      }
+    });
+
+    // app.put("/api/v1/supplies/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   console.log(id);
+    //   try {
+    //     const updatedData = req.body;
+    //     const filter = { _id: new ObjectId(id) };
+    //     const updateDoc = {
+    //       $set: {
+    //         title: updatedData.title,
+    //         category: updatedData.category,
+    //         quantity: updatedData.quantity,
+    //         description: updatedData.description,
+    //       },
+    //     };
+    //     const options = { upsert: true };
+    //     const result = await supply.updateOne(filter, updateDoc, options);
+
+    //     if (result.matchedCount === 0) {
+    //       return res.status(404).json({
+    //         success: false,
+    //         message: "Supply not found",
+    //       });
+    //     }
+
+    //     res.status(200).json({
+    //       success: true,
+    //       message: "Supply updated successfully",
+    //     });
+    //   } catch (error) {
+    //     console.error("Error in PUT /api/v1/supplies/:id", error);
+    //     res.status(500).json({
+    //       success: false,
+    //       message: "Internal Server Error",
+    //     });
+    //   }
+    // });
+
+    // app.put("/api/v1/supplies/:id", async (req, res) => {
+    //   try {
+    //     const id = req.params.id;
+    //     console.log(id);
+
+    //     const task = req.body;
+    //     const filter = { _id: new ObjectId(id) };
+
+    //     const updateDoc = {
+    //       $set: {
+    //         title: task.title,
+    //         category: task.category,
+    //         quantity: task.quantity,
+    //         description: task.description,
+    //       },
+    //     };
+
+    //     const options = { upsert: true };
+    //     const result = await supply.updateOne(filter, updateDoc, options);
+
+    //     if (result.matchedCount === 0) {
+    //       return res.status(404).json({
+    //         success: false,
+    //         message: "Supply not found",
+    //       });
+    //     }
+
+    //     res.status(200).json({
+    //       success: true,
+    //       message: "Supply updated successfully",
+    //     });
+    //   } catch (error) {
+    //     console.error("Error in PUT /api/v1/supplies/:id", error);
+    //     res.status(500).json({
+    //       success: false,
+    //       message: "Internal Server Error",
+    //     });
+    //   }
+    // });
+
+    // DELETE one by id
+    app.delete("/api/v1/leaderboard/:id", async (req, res) => {
+      try {
+        const supplyId = req.params.id;
+
+        // Convert the string ID to ObjectId
+        const objectId = new ObjectId(supplyId);
+
+        // Delete the supply by ID
+        const result = await leaderboard.deleteOne({ _id: objectId });
+
+        if (result.deletedCount === 0) {
+          return res.status(404).json({
+            success: false,
+            message: "Leaderboard not found",
+          });
+        }
+
+        res.status(200).json({
+          success: true,
+          message: "Leaderboard deleted successfully",
+        });
+      } catch (error) {
+        console.error("Error in DELETE /api/v1/supplies/:id", error);
+        res.status(500).json({
+          success: false,
+          message: "Internal Server Error",
+        });
+      }
+    });
+
+    // ==============================================================
+    // leader Board code end
     // ==============================================================
 
     // Start the server
