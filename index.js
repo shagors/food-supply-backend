@@ -51,6 +51,7 @@ async function run() {
     const leaderboard = db.collection("leaderboard");
     const testimonials = db.collection("testimonials");
     const volunteers = db.collection("volunteers");
+    const community = db.collection("community");
 
     // User Registration
     app.post("/api/v1/register", async (req, res) => {
@@ -512,6 +513,42 @@ async function run() {
 
     // ==============================================================
     // Volunteer code end
+    // ==============================================================
+
+    // ==============================================================
+    // Community code start
+    // ==============================================================
+
+    // supply POST function
+    app.post("/api/v1/community", async (req, res) => {
+      const task = req.body;
+      task.createdAt = new Date();
+      const result = await community.insertOne(task);
+      // res.send(result);
+      res.status(201).json({
+        success: true,
+        message: "community created successfully",
+      });
+    });
+
+    // All supply GET function
+    app.get("/api/v1/community", async (req, res) => {
+      try {
+        const communities = await community.find().toArray();
+        res.status(200).json({
+          success: true,
+          data: communities,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Internal Server Error",
+        });
+      }
+    });
+
+    // ==============================================================
+    // Community code end
     // ==============================================================
 
     // Start the server
