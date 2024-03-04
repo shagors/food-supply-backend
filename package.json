@@ -8,7 +8,7 @@
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
-  "author": "Programming Hero",
+  "author": "shajjadshagor@gmail.com",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
