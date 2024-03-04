@@ -49,6 +49,8 @@ async function run() {
     const collection = db.collection("users");
     const supply = db.collection("supplies");
     const leaderboard = db.collection("leaderboard");
+    const testimonials = db.collection("testimonials");
+    const volunteers = db.collection("volunteers");
 
     // User Registration
     app.post("/api/v1/register", async (req, res) => {
@@ -343,83 +345,6 @@ async function run() {
       }
     });
 
-    // app.put("/api/v1/supplies/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   console.log(id);
-    //   try {
-    //     const updatedData = req.body;
-    //     const filter = { _id: new ObjectId(id) };
-    //     const updateDoc = {
-    //       $set: {
-    //         title: updatedData.title,
-    //         category: updatedData.category,
-    //         quantity: updatedData.quantity,
-    //         description: updatedData.description,
-    //       },
-    //     };
-    //     const options = { upsert: true };
-    //     const result = await supply.updateOne(filter, updateDoc, options);
-
-    //     if (result.matchedCount === 0) {
-    //       return res.status(404).json({
-    //         success: false,
-    //         message: "Supply not found",
-    //       });
-    //     }
-
-    //     res.status(200).json({
-    //       success: true,
-    //       message: "Supply updated successfully",
-    //     });
-    //   } catch (error) {
-    //     console.error("Error in PUT /api/v1/supplies/:id", error);
-    //     res.status(500).json({
-    //       success: false,
-    //       message: "Internal Server Error",
-    //     });
-    //   }
-    // });
-
-    // app.put("/api/v1/supplies/:id", async (req, res) => {
-    //   try {
-    //     const id = req.params.id;
-    //     console.log(id);
-
-    //     const task = req.body;
-    //     const filter = { _id: new ObjectId(id) };
-
-    //     const updateDoc = {
-    //       $set: {
-    //         title: task.title,
-    //         category: task.category,
-    //         quantity: task.quantity,
-    //         description: task.description,
-    //       },
-    //     };
-
-    //     const options = { upsert: true };
-    //     const result = await supply.updateOne(filter, updateDoc, options);
-
-    //     if (result.matchedCount === 0) {
-    //       return res.status(404).json({
-    //         success: false,
-    //         message: "Supply not found",
-    //       });
-    //     }
-
-    //     res.status(200).json({
-    //       success: true,
-    //       message: "Supply updated successfully",
-    //     });
-    //   } catch (error) {
-    //     console.error("Error in PUT /api/v1/supplies/:id", error);
-    //     res.status(500).json({
-    //       success: false,
-    //       message: "Internal Server Error",
-    //     });
-    //   }
-    // });
-
     // DELETE one by id
     app.delete("/api/v1/leaderboard/:id", async (req, res) => {
       try {
@@ -443,7 +368,7 @@ async function run() {
           message: "Leaderboard deleted successfully",
         });
       } catch (error) {
-        console.error("Error in DELETE /api/v1/supplies/:id", error);
+        console.error("Error in DELETE /api/v1/leaderboard/:id", error);
         res.status(500).json({
           success: false,
           message: "Internal Server Error",
@@ -453,6 +378,140 @@ async function run() {
 
     // ==============================================================
     // leader Board code end
+    // ==============================================================
+
+    // ==============================================================
+    // Testimonials Board code start
+    // ==============================================================
+
+    // supply POST function
+    app.post("/api/v1/add-testimonial", async (req, res) => {
+      const task = req.body;
+      task.createdAt = new Date();
+      const result = await testimonials.insertOne(task);
+      // res.send(result);
+      res.status(201).json({
+        success: true,
+        message: "Testimonials created successfully",
+      });
+    });
+
+    // All supply GET function
+    app.get("/api/v1/testimonials", async (req, res) => {
+      try {
+        const testimonial = await testimonials.find().toArray();
+        res.status(200).json({
+          success: true,
+          data: testimonial,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Internal Server Error",
+        });
+      }
+    });
+
+    // DELETE one by id
+    app.delete("/api/v1/testimonials/:id", async (req, res) => {
+      try {
+        const supplyId = req.params.id;
+
+        // Convert the string ID to ObjectId
+        const objectId = new ObjectId(supplyId);
+
+        // Delete the supply by ID
+        const result = await testimonials.deleteOne({ _id: objectId });
+
+        if (result.deletedCount === 0) {
+          return res.status(404).json({
+            success: false,
+            message: "Testimonials not found",
+          });
+        }
+
+        res.status(200).json({
+          success: true,
+          message: "Leaderboard deleted successfully",
+        });
+      } catch (error) {
+        console.error("Error in DELETE /api/v1/testimonials/:id", error);
+        res.status(500).json({
+          success: false,
+          message: "Internal Server Error",
+        });
+      }
+    });
+
+    // ==============================================================
+    // Testimonials Board code end
+    // ==============================================================
+
+    // ==============================================================
+    // Volunteer code start
+    // ==============================================================
+
+    // supply POST function
+    app.post("/api/v1/add-volunteer", async (req, res) => {
+      const task = req.body;
+      task.createdAt = new Date();
+      const result = await volunteers.insertOne(task);
+      // res.send(result);
+      res.status(201).json({
+        success: true,
+        message: "Volunteer created successfully",
+      });
+    });
+
+    // All supply GET function
+    app.get("/api/v1/volunteers", async (req, res) => {
+      try {
+        const volunteer = await volunteers.find().toArray();
+        res.status(200).json({
+          success: true,
+          data: volunteer,
+        });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Internal Server Error",
+        });
+      }
+    });
+
+    // DELETE one by id
+    app.delete("/api/v1/volunteers/:id", async (req, res) => {
+      try {
+        const supplyId = req.params.id;
+
+        // Convert the string ID to ObjectId
+        const objectId = new ObjectId(supplyId);
+
+        // Delete the supply by ID
+        const result = await volunteers.deleteOne({ _id: objectId });
+
+        if (result.deletedCount === 0) {
+          return res.status(404).json({
+            success: false,
+            message: "volunteers not found",
+          });
+        }
+
+        res.status(200).json({
+          success: true,
+          message: "volunteers deleted successfully",
+        });
+      } catch (error) {
+        console.error("Error in DELETE /api/v1/volunteers/:id", error);
+        res.status(500).json({
+          success: false,
+          message: "Internal Server Error",
+        });
+      }
+    });
+
+    // ==============================================================
+    // Volunteer code end
     // ==============================================================
 
     // Start the server
